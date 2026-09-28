@@ -11,9 +11,8 @@ public class LocadoraContext : DbContext
     public DbSet<Veiculo> Veiculos => Set<Veiculo>();
     public DbSet<Aluguel> Alugueis => Set<Aluguel>();
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public LocadoraContext(DbContextOptions<LocadoraContext> options) : base(options)
     {
-        optionsBuilder.UseSqlServer("Server=NOTEDANIEL;Database=LocadoraDB;Trusted_Connection=True;TrustServerCertificate=True;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
