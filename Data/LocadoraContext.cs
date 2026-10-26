@@ -1,4 +1,4 @@
-using Locadora.Entities;
+﻿using Locadora.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Locadora.Data;
@@ -10,6 +10,7 @@ public class LocadoraContext : DbContext
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<Veiculo> Veiculos => Set<Veiculo>();
     public DbSet<Aluguel> Alugueis => Set<Aluguel>();
+    public DbSet<Produto> Produtos => Set<Produto>();
 
     public LocadoraContext(DbContextOptions<LocadoraContext> options) : base(options)
     {
@@ -96,6 +97,20 @@ public class LocadoraContext : DbContext
                 .HasForeignKey(aluguel => aluguel.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<Produto>(entity =>
+        {
+            entity.ToTable("Produtos");
+            entity.HasKey(produto => produto.Id);
+            entity.Property(produto => produto.Nome).HasMaxLength(150).IsRequired();
+            entity.Property(produto => produto.Codigo).HasMaxLength(50).IsRequired();
+            entity.Property(produto => produto.Preco).HasPrecision(18, 2).IsRequired();
+            entity.Property(produto => produto.Descricao).HasMaxLength(500);
+            entity.Property(produto => produto.QuantidadeEstoque).IsRequired();
+            entity.Property(produto => produto.Avaliacao).HasPrecision(3, 2).IsRequired();
+            entity.Property(produto => produto.Categoria).HasMaxLength(100).IsRequired();
+            entity.HasIndex(produto => produto.Codigo).IsUnique();
         });
     }
 }
