@@ -21,11 +21,19 @@ namespace Locadora.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? nome, [FromQuery] string? descricao)
         {
             try
             {
-                var categorias = await _context.Categorias.ToListAsync();
+                var query = _context.Categorias.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(nome))
+                    query = query.Where(c => c.Nome.ToLower().Contains(nome.ToLower()));
+
+                if (!string.IsNullOrWhiteSpace(descricao))
+                    query = query.Where(c => c.Descricao != null && c.Descricao.ToLower().Contains(descricao.ToLower()));
+
+                var categorias = await query.OrderBy(c => c.Nome).ToListAsync();
                 var dtos = categorias.Select(c => new CategoriaReadDto
                 {
                     Id = c.Id,

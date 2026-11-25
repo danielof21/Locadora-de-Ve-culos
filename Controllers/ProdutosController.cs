@@ -21,13 +21,31 @@ namespace Locadora.Controllers
             _context = context;
         }
 
-        // 1. GET: Leitura de todos os dados do banco com Get
+        // 1. GET: Leitura de todos os dados do banco com filtros personalizados
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? nome,
+            [FromQuery] string? codigo,
+            [FromQuery] string? categoria,
+            [FromQuery] decimal? precoMax)
         {
             try
             {
-                var produtos = await _context.Produtos.ToListAsync();
+                var query = _context.Produtos.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(nome))
+                    query = query.Where(p => p.Nome.ToLower().Contains(nome.ToLower()));
+
+                if (!string.IsNullOrWhiteSpace(codigo))
+                    query = query.Where(p => p.Codigo.ToLower().Contains(codigo.ToLower()));
+
+                if (!string.IsNullOrWhiteSpace(categoria))
+                    query = query.Where(p => p.Categoria.ToLower().Contains(categoria.ToLower()));
+
+                if (precoMax.HasValue)
+                    query = query.Where(p => p.Preco <= precoMax.Value);
+
+                var produtos = await query.OrderBy(p => p.Nome).ToListAsync();
                 var dtos = produtos.Select(p => new ProdutoReadDto
                 {
                     Id = p.Id,

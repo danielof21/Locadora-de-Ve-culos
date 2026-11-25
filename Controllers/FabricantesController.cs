@@ -21,11 +21,24 @@ namespace Locadora.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? nome, [FromQuery] int? id, [FromQuery] bool? possuiVeiculos)
         {
             try
             {
-                var fabricantes = await _context.Fabricantes.ToListAsync();
+                var query = _context.Fabricantes.Include(f => f.Veiculos).AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(nome))
+                    query = query.Where(f => f.Nome.ToLower().Contains(nome.ToLower()));
+
+                if (id.HasValue)
+                    query = query.Where(f => f.Id == id.Value);
+
+                if (possuiVeiculos.HasValue)
+                    query = possuiVeiculos.Value
+                        ? query.Where(f => f.Veiculos.Any())
+                        : query.Where(f => !f.Veiculos.Any());
+
+                var fabricantes = await query.OrderBy(f => f.Nome).ToListAsync();
                 var dtos = fabricantes.Select(f => new FabricanteReadDto
                 {
                     Id = f.Id,

@@ -21,14 +21,36 @@ namespace Locadora.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? modelo,
+            [FromQuery] int? fabricanteId,
+            [FromQuery] int? categoriaId,
+            [FromQuery] int? anoMinimo,
+            [FromQuery] int? kmMaxima)
         {
             try
             {
-                var veiculos = await _context.Veiculos
+                var query = _context.Veiculos
                     .Include(v => v.Fabricante)
                     .Include(v => v.Categoria)
-                    .ToListAsync();
+                    .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(modelo))
+                    query = query.Where(v => v.Modelo.ToLower().Contains(modelo.ToLower()));
+
+                if (fabricanteId.HasValue)
+                    query = query.Where(v => v.FabricanteId == fabricanteId.Value);
+
+                if (categoriaId.HasValue)
+                    query = query.Where(v => v.CategoriaId == categoriaId.Value);
+
+                if (anoMinimo.HasValue)
+                    query = query.Where(v => v.AnoFabricacao >= anoMinimo.Value);
+
+                if (kmMaxima.HasValue)
+                    query = query.Where(v => v.QuilometragemAtual <= kmMaxima.Value);
+
+                var veiculos = await query.OrderBy(v => v.Modelo).ToListAsync();
 
                 var dtos = veiculos.Select(v => new VeiculoReadDto
                 {
@@ -37,9 +59,9 @@ namespace Locadora.Controllers
                     AnoFabricacao = v.AnoFabricacao,
                     QuilometragemAtual = v.QuilometragemAtual,
                     FabricanteId = v.FabricanteId,
-                    FabricanteNome = v.Fabricante?.Nome,
+                    FabricanteNome = v.Fabricante?.Nome ?? string.Empty,
                     CategoriaId = v.CategoriaId,
-                    CategoriaNome = v.Categoria?.Nome
+                    CategoriaNome = v.Categoria?.Nome ?? string.Empty
                 });
                 return Ok(dtos);
             }
@@ -68,9 +90,9 @@ namespace Locadora.Controllers
                     AnoFabricacao = veiculo.AnoFabricacao,
                     QuilometragemAtual = veiculo.QuilometragemAtual,
                     FabricanteId = veiculo.FabricanteId,
-                    FabricanteNome = veiculo.Fabricante?.Nome,
+                    FabricanteNome = veiculo.Fabricante?.Nome ?? string.Empty,
                     CategoriaId = veiculo.CategoriaId,
-                    CategoriaNome = veiculo.Categoria?.Nome
+                    CategoriaNome = veiculo.Categoria?.Nome ?? string.Empty
                 };
                 return Ok(dto);
             }
