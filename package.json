@@ -1,0 +1,9 @@
+{
+  "name": "locadora-veiculos-tp2",
+  "version": "2.0.0",
+  "description": "Sistema Integrado de Gestão de Locadora de Veículos e Produtos - Trabalho Prático 1 e 2",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
