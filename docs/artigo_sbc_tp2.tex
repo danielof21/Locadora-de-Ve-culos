@@ -1,0 +1,93 @@
+\documentclass[12pt]{article}
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+
+\sloppy
+
+\title{Desenvolvimento de Front-end Integrado à API RESTful para Gestão de Locadora de Veículos e Controle de Frota}
+
+\author{Daniel Silva Oliveira\inst{1}}
+
+\address{Curso de Análise e Desenvolvimento de Sistemas -- Pontifícia Universidade Católica de Minas Gerais (PUC Minas)
+  \email{daniel.oliveira@sga.pucminas.br}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This paper presents the design and implementation of a web-based front-end system integrated with a RESTful API and relational database developed for car rental management. The solution implements full CRUD operations, multi-field search filters for all domain entities, and analytical visualizations consuming relational JOIN and GROUP BY queries.
+\end{abstract}
+
+\begin{resumo}
+  Este artigo apresenta a modelagem de interface (wireframes) e o desenvolvimento do front-end integrado ao back-end e banco de dados relacional construídos no Trabalho Prático 1 para a gestão de uma locadora de veículos. A aplicação web contempla telas de cadastro, edição, exclusão e pesquisa com filtros personalizados em múltiplos campos para todas as entidades (\textit{Clientes}, \textit{Fabricantes}, \textit{Categorias}, \textit{Veículos}, \textit{Aluguéis} e \textit{Produtos}), além de painéis de visualização conectados às rotas de consultas relacionais (\textit{INNER JOIN}, \textit{LEFT JOIN} e \textit{GROUP BY}) desenvolvidas na terceira etapa.
+\end{resumo}
+
+\section{Introdução e Definição do Problema}
+
+Empresas do setor de locação de veículos lidam diariamente com operações críticas que exigem consistência transacional: cadastro e validação de clientes, categorização da frota por fabricante e segmento, controle de disponibilidade em tempo real e apuração de quilometragem e valores de diárias no encerramento dos contratos.
+
+No Trabalho Prático 1, foi modelado o banco de dados relacional e implementada a API RESTful utilizando ASP.NET Core, Entity Framework Core e SQL Server. Neste Trabalho Prático 2, o objetivo é projetar os \textit{wireframes} e construir a camada de apresentação (\textit{front-end}) integrada via \texttt{fetch} a todos os artefatos e rotas do back-end.
+
+\section{Modelagem do Banco de Dados (Trabalho Prático 1)}
+
+A modelagem relacional adotada no Trabalho Prático 1 (ilustrada no arquivo \texttt{modelo\_conceitual.jpg} do repositório) é composta pelas seguintes entidades e restrições de integridade:
+
+\begin{itemize}
+  \item \textbf{Clientes (\texttt{Clientes}):} Chave primária \texttt{Id}, atributos \texttt{Nome}, \texttt{Cpf} (11 dígitos com índice único) e \texttt{Email} (índice único).
+  \item \textbf{Fabricantes (\texttt{Fabricantes}):} Chave primária \texttt{Id} e \texttt{Nome} (único), relacionando-se em $1:N$ com \texttt{Veiculos}.
+  \item \textbf{Categorias (\texttt{Categorias}):} Chave primária \texttt{Id}, \texttt{Nome} (único) e \texttt{Descricao}, relacionando-se em $1:N$ com \texttt{Veiculos}.
+  \item \textbf{Veículos (\texttt{Veiculos}):} Chave primária \texttt{Id}, \texttt{Modelo}, \texttt{AnoFabricacao} (\textit{Check Constraint} $\ge 1886$), \texttt{QuilometragemAtual} ($\ge 0$) e chaves estrangeiras \texttt{FabricanteId} e \texttt{CategoriaId} com \texttt{DeleteBehavior.Restrict}.
+  \item \textbf{Aluguéis (\texttt{Alugueis}):} Chave primária \texttt{Id}, \texttt{DataInicio}, \texttt{DataPrevistaFim}, \texttt{DataDevolucao}, \texttt{QuilometragemInicial}, \texttt{QuilometragemFinal}, \texttt{ValorDiaria}, \texttt{ValorTotalLocacao} e chaves estrangeiras \texttt{ClienteId} e \texttt{VeiculoId}.
+  \item \textbf{Produtos (\texttt{Produtos}):} Catálogo complementar com \texttt{Id}, \texttt{Nome}, \texttt{Codigo} (único), \texttt{Preco}, \texttt{QuantidadeEstoque}, \texttt{Avaliacao} e \texttt{Categoria}.
+\end{itemize}
+
+\section{Wireframes e Arquitetura do Front-end}
+
+Os wireframes de média e alta fidelidade foram elaborados previamente para guiar a construção das telas e encontram-se disponíveis na rota \texttt{frontend/wireframes.html} e no arquivo vetorial \texttt{docs/wireframes/wireframes\_sistema.svg} (compatível com importação direta no Figma).
+
+O front-end foi estruturado na pasta dedicada \texttt{frontend/} utilizando HTML5, CSS3, Bootstrap 5 e JavaScript modular (\texttt{app.js}), implementando:
+\begin{enumerate}
+  \item \textbf{CRUD Completo para Todas as Entidades:} Telas e modais para listagem (\texttt{GET}), criação (\texttt{POST}), atualização (\texttt{PUT}) e exclusão com confirmação e validação de integridade referencial (\texttt{DELETE}).
+  \item \textbf{Pesquisa com Filtros Personalizados ($\ge 2$ campos por entidade):}
+  \begin{itemize}
+    \item \textit{Clientes:} Filtro simultâneo por Nome, CPF e E-mail.
+    \item \textit{Fabricantes:} Filtro por Nome, ID e vínculo de frota (com/sem veículos).
+    \item \textit{Categorias:} Filtro por Nome e palavra-chave na Descrição.
+    \item \textit{Veículos:} Filtro por Modelo, Fabricante, Categoria, Ano Mínimo e KM Máxima.
+    \item \textit{Aluguéis:} Filtro por Cliente, Veículo, Status (Ativo/Finalizado) e Diária Máxima.
+    \item \textit{Produtos:} Filtro por Nome, Código SKU, Categoria e Preço Máximo.
+  \end{itemize}
+\end{enumerate}
+
+\section{Exemplos de Consultas (Banco e Rota) e Resultados no Front-end}
+
+Para atender às rotas criadas na terceira etapa (\texttt{FiltrosController}), o painel \textit{Consultas \& Visualizações} consome cinco endpoints analíticos:
+
+\subsection{Consulta 1: Veículos Disponíveis por Categoria e Ano Mínimo}
+\begin{itemize}
+  \item \textbf{Rota HTTP:} \texttt{GET /api/filtros/veiculos-disponiveis?categoriaId=\{id\}\&anoMinimo=\{ano\}}
+  \item \textbf{Consulta no Banco:} Combina \texttt{INNER JOIN} entre \texttt{Veiculos}, \texttt{Categorias} e \texttt{Fabricantes} com um \texttt{LEFT JOIN} na tabela \texttt{Alugueis} filtrando apenas locações em aberto (\texttt{DataDevolucao == null}) onde não há vínculo ativo (\texttt{ag == null}).
+  \item \textbf{Resultado no Front-end:} Atualiza dinamicamente a tabela de disponibilidade da frota conforme a categoria e o ano mínimo selecionados pelo operador.
+\end{itemize}
+
+\subsection{Consulta 2: Agrupamento de Frota por Fabricante e Aluguéis por Cliente}
+\begin{itemize}
+  \item \textbf{Rotas HTTP:} \texttt{GET /api/filtros/fabricantes-com-veiculos} e \texttt{GET /api/filtros/alugueis-por-cliente?clienteNome=\{nome\}}
+  \item \textbf{Consulta no Banco:} A primeira utiliza \texttt{LEFT JOIN} com \texttt{GROUP BY} para contabilizar veículos por fabricante (incluindo fabricantes com 0 veículos); a segunda realiza \texttt{INNER JOIN} entre \texttt{Alugueis}, \texttt{Clientes} e \texttt{Veiculos}.
+  \item \textbf{Resultado no Front-end:} Renderiza gráficos de barras horizontais proporcionais e tabelas detalhadas de contratos.
+\end{itemize}
+
+\section{Considerações Finais}
+
+A integração entre o front-end desenvolvido e a API do Trabalho Prático 1 permitiu validar, na prática, o ciclo completo de persistência, integridade referencial e consultas relacionais com \texttt{JOIN} e \texttt{GROUP BY}, entregando uma interface responsiva e alinhada aos wireframes projetados.
+
+\begin{thebibliography}{99}
+\bibitem{elmasri} Elmasri, R. and Navathe, S. B. (2019). \textit{Sistemas de Banco de Dados}. Pearson, 7ª edição.
+\bibitem{msdocs} Microsoft (2026). \textit{ASP.NET Core Web API and Entity Framework Core Documentation}. Disponível em: \url{https://learn.microsoft.com/aspnet/core}.
+\end{thebibliography}
+
+\end{document}
