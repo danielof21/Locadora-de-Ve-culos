@@ -1,4 +1,4 @@
-﻿# Sistema de Gestão de Locadora de Veículos & Produtos (TP1 e TP2)
+# Sistema de Gestão de Locadora de Veículos & Produtos (TP1 e TP2)
 
 Repositório unificado contendo o **Back-end RESTful e Modelagem de Banco de Dados (Trabalho Prático 1)** e o **Front-end Web Integrado, Wireframes e Painel de Consultas/Visualizações (Trabalho Prático 2)**.
 

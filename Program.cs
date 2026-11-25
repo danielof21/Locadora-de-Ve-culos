@@ -1,4 +1,4 @@
-﻿using Locadora.Data;
+using Locadora.Data;
 using Locadora.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
