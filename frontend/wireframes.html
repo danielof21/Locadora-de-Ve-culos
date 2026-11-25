@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframes de Média/Alta Fidelidade - Locadora de Veículos (TP2)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e2e8f0;
+            font-family: "Segoe UI", system-ui, sans-serif;
+            transition: filter 0.25s ease;
+        }
+        body.grayscale-mode .wireframe-canvas {
+            filter: grayscale(100%);
+        }
+        .wireframe-canvas {
+            background: #ffffff;
+            border: 2px dashed #64748b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+        }
+        .wf-header {
+            background: #1e293b;
+            color: #fff;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .wf-pill {
+            background: #334155;
+            color: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+        }
+        .wf-pill.active {
+            background: #2563eb;
+            color: #fff;
+            font-weight: 600;
+        }
+        .wf-box {
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .wf-input {
+            background: #ffffff;
+            border: 1.5px solid #94a3b8;
+            border-radius: 6px;
+            height: 32px;
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+        }
+        .wf-btn {
+            border-radius: 6px;
+            height: 32px;
+            padding: 4px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="grayscale-mode">
+
+    <nav class="navbar navbar-dark bg-dark shadow-sm mb-4">
+        <div class="container">
+            <div>
+                <span class="badge bg-info text-dark me-2">Rubrica: Wireframes (1,0 pt)</span>
+                <span class="navbar-brand fw-bold mb-0">Wireframes de Média / Alta Fidelidade (TP2)</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-warning btn-sm fw-semibold" id="btnToggleCor" onclick="alternarModoCor()">
+                    Alternar: Tons de Cinza / Colorido
+                </button>
+                <a href="/docs/wireframes/wireframes_sistema.svg" download class="btn btn-outline-info btn-sm">
+                    Baixar SVG (Importar no Figma)
+                </a>
+                <a href="index.html" class="btn btn-primary btn-sm">
+                    Voltar ao Sistema
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container pb-5">
+        <div class="alert alert-secondary small">
+            <strong>Guia de Wireframes do Projeto:</strong> Abaixo estão os 3 wireframes estruturais que guiaram o desenvolvimento do Front-end integrado ao Back-end do Trabalho Prático 1. Utilize o botão no topo para alternar entre <strong>Média Fidelidade (Tons de Cinza)</strong> e <strong>Alta Fidelidade (Colorido)</strong>, ou baixe o arquivo <code>wireframes_sistema.svg</code> para arrastar diretamente para o <strong>Figma</strong>.
+        </div>
+
+        <!-- WIREFRAME 1: DASHBOARD & MODELAGEM -->
+        <div class="wireframe-canvas">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-dark">WIREFRAME 01 — TELA PRINCIPAL: VISÃO GERAL, KPIS & MODELAGEM RELACIONAL (TP1)</span>
+                <small class="text-muted">Rota: <code>frontend/index.html#sec-dashboard</code></small>
+            </div>
+
+            <div class="wf-header mb-3">
+                <div class="fw-bold">[LOGO] Sistema de Gestão de Locadora de Veículos</div>
+                <div class="d-flex gap-1 flex-wrap">
+                    <span class="wf-pill active">Visão Geral</span>
+                    <span class="wf-pill">Consultas (Etapa 3)</span>
+                    <span class="wf-pill">Clientes</span>
+                    <span class="wf-pill">Fabricantes</span>
+                    <span class="wf-pill">Categorias</span>
+                    <span class="wf-pill">Veículos</span>
+                    <span class="wf-pill">Aluguéis</span>
+                    <span class="wf-pill">Produtos</span>
+                </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-2"><div class="wf-box text-center"><small class="text-muted d-block">KPI Clientes</small><strong class="fs-5 text-primary">06</strong></div></div>
+                <div class="col-2"><div class="wf-box text-center"><small class="text-muted d-block">KPI Frota</small><strong class="fs-5">08</strong></div></div>
+                <div class="col-2"><div class="wf-box text-center"><small class="text-muted d-block">KPI Disponíveis</small><strong class="fs-5 text-success">05</strong></div></div>
+                <div class="col-2"><div class="wf-box text-center"><small class="text-muted d-block">KPI Ativos</small><strong class="fs-5 text-warning">03</strong></div></div>
+                <div class="col-2"><div class="wf-box text-center"><small class="text-muted d-block">Fab. / Cat.</small><strong class="fs-5 text-info">07 / 05</strong></div></div>
+                <div class="col-2"><div class="wf-box text-center"><small class="text-muted d-block">KPI Receita</small><strong class="fs-6 text-success">R$ 2.640</strong></div></div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-5">
+                    <div class="wf-box h-100">
+                        <div class="fw-bold small mb-2">[BLOCO A] Resumo das Entidades & Gráfico de Frota</div>
+                        <div class="p-2 bg-white border rounded small mb-2">Tabela de Mapeamento: Clientes, Fabricantes, Categorias, Veículos, Aluguéis e Produtos</div>
+                        <div class="p-2 bg-white border rounded small">
+                            <div>Toyota — [████████████] 2 veículos</div>
+                            <div>Volkswagen — [████████████] 2 veículos</div>
+                            <div>Chevrolet — [██████] 1 veículo</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="wf-box h-100 text-center d-flex flex-column justify-content-center align-items-center" style="min-height: 180px;">
+                        <div class="fw-bold small mb-1">[BLOCO B] Diagrama Entidade-Relacionamento (modelo_conceitual.jpg - TP1)</div>
+                        <div class="text-muted small">[Imagem do Modelo Conceitual Relacional com Chaves Primárias e Estrangeiras]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WIREFRAME 2: CONSULTAS E VISUALIZAÇÕES DA 3ª ETAPA -->
+        <div class="wireframe-canvas">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-dark">WIREFRAME 02 — PAINEL DE CONSULTAS AVANÇADAS, FILTROS & VISUALIZAÇÕES (ROTAS DA 3ª ETAPA)</span>
+                <small class="text-muted">Rotas: <code>GET /api/filtros/*</code> (INNER JOIN &amp; LEFT JOIN + GROUP BY)</small>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="wf-box">
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong class="small">Consulta 1: Veículos Disponíveis (INNER + LEFT JOIN)</strong>
+                            <span class="badge bg-primary">/api/filtros/veiculos-disponiveis</span>
+                        </div>
+                        <div class="p-2 bg-dark text-light rounded small font-monospace mb-2">SELECT v.*, f.Nome, c.Nome FROM Veiculos v INNER JOIN ... LEFT JOIN Alugueis ...</div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-5"><div class="wf-input">[Select: Categoria ▼]</div></div>
+                            <div class="col-4"><div class="wf-input">[Input: Ano Mínimo]</div></div>
+                            <div class="col-3"><div class="wf-btn bg-primary text-white w-100">Consultar</div></div>
+                        </div>
+                        <div class="p-2 bg-white border rounded small">[Tabela Dinâmica de Resultados: ID | Modelo | Fabricante | Categoria | Ano | KM]</div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="wf-box">
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong class="small">Consulta 2: Aluguéis por Cliente (INNER JOIN)</strong>
+                            <span class="badge bg-primary">/api/filtros/alugueis-por-cliente</span>
+                        </div>
+                        <div class="p-2 bg-dark text-light rounded small font-monospace mb-2">SELECT a.*, c.Nome, v.Modelo FROM Alugueis a INNER JOIN Clientes c ...</div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-9"><div class="wf-input">[Input: Pesquisar por Nome do Cliente...]</div></div>
+                            <div class="col-3"><div class="wf-btn bg-primary text-white w-100">Consultar</div></div>
+                        </div>
+                        <div class="p-2 bg-white border rounded small">[Tabela Dinâmica de Resultados: ID | Cliente | Veículo | Início | Status | Diária]</div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="wf-box">
+                        <strong class="small d-block mb-1">Consulta 3: Veículos por Fabricante</strong>
+                        <div class="wf-input mb-2">[Filtro: Nome do Fabricante]</div>
+                        <div class="p-2 bg-white border rounded small">[Tabela: Modelo | Fabricante | Categoria]</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="wf-box">
+                        <strong class="small d-block mb-1">Consulta 4: Frota por Fabricante (GROUP BY)</strong>
+                        <div class="p-2 bg-white border rounded small">[Gráfico de Barras Horizontais: Fabricante x Qtd Veículos]</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="wf-box">
+                        <strong class="small d-block mb-1">Consulta 5: Aluguéis Ativos por Cliente</strong>
+                        <div class="p-2 bg-white border rounded small">[Gráfico de Barras Horizontais: Cliente x Locações Ativas]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WIREFRAME 3: TELAS DE CRUD + FILTROS MULTI-CAMPO + MODAL -->
+        <div class="wireframe-canvas">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-dark">WIREFRAME 03 — PADRÃO DE TELA CRUD + PESQUISA MULTI-FILTRO + MODAL (TODAS AS ENTIDADES)</span>
+                <small class="text-muted">Aplicado a: Clientes, Fabricantes, Categorias, Veículos, Aluguéis e Produtos</small>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-8">
+                    <div class="wf-box h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="small">Listagem e Pesquisa da Entidade (Ex: Veículos / Clientes / Aluguéis)</strong>
+                            <span class="wf-btn bg-success text-white">+ Novo Registro (Abre Modal POST)</span>
+                        </div>
+
+                        <div class="p-2 bg-white border rounded mb-3">
+                            <small class="fw-bold text-muted d-block mb-1">BARRA DE PESQUISA COM FILTROS PERSONALIZADOS (&gt;= 2 CAMPOS POR ENTIDADE)</small>
+                            <div class="row g-2">
+                                <div class="col-3"><div class="wf-input">[Filtro Campo 1: Texto]</div></div>
+                                <div class="col-3"><div class="wf-input">[Filtro Campo 2: Select ▼]</div></div>
+                                <div class="col-3"><div class="wf-input">[Filtro Campo 3: Faixa/Valor]</div></div>
+                                <div class="col-3 d-flex gap-1">
+                                    <div class="wf-btn bg-primary text-white w-100">Pesquisar</div>
+                                    <div class="wf-btn border bg-light text-secondary">Limpar</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-2 bg-white border rounded small">
+                            <div class="d-flex justify-content-between border-bottom pb-1 mb-2 fw-bold text-secondary">
+                                <span>ID</span><span>Campos Principais &amp; FKs</span><span>Status</span><span>Ações (PUT / DELETE)</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                <span>#1</span><span>Registro Exemplo 01 (Vínculo FK)</span><span class="badge bg-success">Ativo</span>
+                                <span><span class="badge bg-primary me-1">Editar</span><span class="badge bg-danger">Excluir</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1">
+                                <span>#2</span><span>Registro Exemplo 02 (Vínculo FK)</span><span class="badge bg-warning text-dark">Locado</span>
+                                <span><span class="badge bg-primary me-1">Editar</span><span class="badge bg-danger">Excluir</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="wf-box h-100">
+                        <div class="bg-dark text-white p-2 rounded-top small fw-bold d-flex justify-content-between">
+                            <span>[MODAL] Cadastrar / Editar Entidade</span>
+                            <span>[X]</span>
+                        </div>
+                        <div class="p-3 bg-white border border-top-0 rounded-bottom">
+                            <div class="mb-2">
+                                <small class="fw-semibold d-block">Campo Obrigatório 1 *</small>
+                                <div class="wf-input">[Input Validado]</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="fw-semibold d-block">Chave Estrangeira (FK) *</small>
+                                <div class="wf-input">[Select Relacional Dinâmico ▼]</div>
+                            </div>
+                            <div class="mb-3">
+                                <small class="fw-semibold d-block">Campo Numérico / Data *</small>
+                                <div class="wf-input">[Input Number / Date]</div>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <div class="wf-btn bg-secondary text-white">Cancelar</div>
+                                <div class="wf-btn bg-primary text-white">Salvar (POST/PUT)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function alternarModoCor() {
+            document.body.classList.toggle("grayscale-mode");
+        }
+    </script>
+</body>
+</html>
