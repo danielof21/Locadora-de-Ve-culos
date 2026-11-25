@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locadora de Veículos & Produtos - Sistema Integrado (TP1 & TP2)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Barra de Navegação Principal -->
+    <header class="bg-dark text-white shadow-sm sticky-top">
+        <div class="container-fluid px-4 py-2 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary px-2 py-1">TP1 & TP2</span>
+                <span class="fs-5 fw-bold navbar-brand-title">Sistema de Gestão de Locadora de Veículos</span>
+            </div>
+
+            <ul class="nav nav-pills nav-pills-custom flex-wrap gap-1" id="menuNavegacao" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-tab="sec-dashboard" onclick="alternarAba('sec-dashboard')">Visão Geral & Modelagem</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-consultas" onclick="alternarAba('sec-consultas')">Consultas & Visualizações (Etapa 3)</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-clientes" onclick="alternarAba('sec-clientes')">Clientes</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-fabricantes" onclick="alternarAba('sec-fabricantes')">Fabricantes</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-categorias" onclick="alternarAba('sec-categorias')">Categorias</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-veiculos" onclick="alternarAba('sec-veiculos')">Veículos</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-alugueis" onclick="alternarAba('sec-alugueis')">Aluguéis</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="sec-produtos" onclick="alternarAba('sec-produtos')">Produtos</button>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="wireframes.html">Wireframes</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container-fluid px-4 py-4">
+        <div id="alertaGlobal" class="alert d-none" role="alert"></div>
+
+        <!-- ================================================================
+             ABA 1: VISÃO GERAL, PROBLEMA & MODELAGEM ADOTADA (TP1)
+             ================================================================ -->
+        <section id="sec-dashboard" class="tab-section">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="fw-bold mb-0">Painel Executivo & Modelagem do Sistema</h3>
+                    <p class="text-muted mb-0">Integração Front-end com API RESTful e Banco de Dados Relacional do Trabalho Prático 1</p>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="carregarTudo()">Atualizar Indicadores</button>
+            </div>
+
+            <!-- Cards de KPIs -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="card kpi-card p-3">
+                        <span class="text-muted small fw-semibold">Clientes Cadastrados</span>
+                        <div class="kpi-value text-primary mt-1" id="kpiClientes">0</div>
+                        <small class="text-secondary mt-1">GET /api/clientes</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="card kpi-card p-3">
+                        <span class="text-muted small fw-semibold">Frota de Veículos</span>
+                        <div class="kpi-value text-dark mt-1" id="kpiVeiculos">0</div>
+                        <small class="text-secondary mt-1">GET /api/veiculos</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="card kpi-card p-3">
+                        <span class="text-muted small fw-semibold">Veículos Disponíveis</span>
+                        <div class="kpi-value text-success mt-1" id="kpiDisponiveis">0</div>
+                        <small class="text-secondary mt-1">GET /api/filtros/veiculos-disponiveis</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="card kpi-card p-3">
+                        <span class="text-muted small fw-semibold">Locações Ativas</span>
+                        <div class="kpi-value text-warning mt-1" id="kpiAlugueisAtivos">0</div>
+                        <small class="text-secondary mt-1">DataDevolucao IS NULL</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="card kpi-card p-3">
+                        <span class="text-muted small fw-semibold">Fabricantes & Categorias</span>
+                        <div class="kpi-value text-info mt-1" id="kpiFabCat">0 / 0</div>
+                        <small class="text-secondary mt-1">Tabelas de Domínio</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="card kpi-card p-3">
+                        <span class="text-muted small fw-semibold">Receita Consolidada</span>
+                        <div class="kpi-value text-success mt-1" id="kpiReceita">R$ 0,00</div>
+                        <small class="text-secondary mt-1">Locações Finalizadas</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo do Problema, Modelagem Relacional e Diagrama Conceitual do TP1 -->
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <div class="card section-card p-4 h-100">
+                        <h5 class="fw-bold mb-3">1. Problema & Modelagem Adotada (TP1)</h5>
+                        <p class="text-secondary small">
+                            <strong>Problema Resolvido:</strong> Locadoras de veículos enfrentam inconsistências operacionais ao controlar manualmente a disponibilidade de frota, quilometragem, vínculo entre fabricantes/categorias e histórico de contratos de locação por cliente.
+                        </p>
+                        <p class="text-secondary small">
+                            <strong>Solução e Arquitetura:</strong> Modelagem relacional normalizada implementada com <strong>ASP.NET Core Web API / Entity Framework Core</strong> e persistência transacional, garantindo integridade referencial (<code>DeleteBehavior.Restrict</code>), índices únicos (CPF, E-mail, Nome de Fabricante/Categoria e Código de Produto) e <em>Check Constraints</em> de domínio.
+                        </p>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-sm table-bordered mb-0 small">
+                                <thead>
+                                    <tr>
+                                        <th>Entidade</th>
+                                        <th>Chaves & Restrições</th>
+                                        <th>Rota Base da API</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Clientes</strong></td>
+                                        <td>PK <code>Id</code> | UK <code>Cpf</code> (11 díg.), UK <code>Email</code></td>
+                                        <td><code>/api/clientes</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fabricantes</strong></td>
+                                        <td>PK <code>Id</code> | UK <code>Nome</code> (1:N Veículos)</td>
+                                        <td><code>/api/fabricantes</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Categorias</strong></td>
+                                        <td>PK <code>Id</code> | UK <code>Nome</code> (1:N Veículos)</td>
+                                        <td><code>/api/categorias</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Veículos</strong></td>
+                                        <td>PK <code>Id</code> | FK <code>FabricanteId</code>, FK <code>CategoriaId</code></td>
+                                        <td><code>/api/veiculos</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Aluguéis</strong></td>
+                                        <td>PK <code>Id</code> | FK <code>ClienteId</code>, FK <code>VeiculoId</code></td>
+                                        <td><code>/api/alugueis</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Produtos</strong></td>
+                                        <td>PK <code>Id</code> | UK <code>Codigo</code> (Estoque/Catálogo)</td>
+                                        <td><code>/api/produtos</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr class="my-3">
+                        <h6 class="fw-bold mb-2">Distribuição Visual da Frota por Fabricante</h6>
+                        <div id="dashGraficoFabricantes"></div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card section-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">2. Diagrama do Modelo Conceitual (Artefato TP1)</h5>
+                            <span class="badge bg-secondary">modelo_conceitual.jpg</span>
+                        </div>
+                        <div class="text-center">
+                            <img src="/modelo_conceitual.jpg" alt="Modelo Conceitual do Banco de Dados - TP1" class="er-image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 2: CONSULTAS & VISUALIZAÇÕES (ETAPA 3 - JOINS & GROUP BY)
+             ================================================================ -->
+        <section id="sec-consultas" class="tab-section d-none">
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">Consultas Avançadas, Filtros & Visualizações (Rotas da 3ª Etapa)</h3>
+                <p class="text-muted mb-0">
+                    Painel conectado ao <code>FiltrosController</code> executando consultas relacionais com <code>INNER JOIN</code>, <code>LEFT JOIN</code> e agregações <code>GROUP BY</code> no banco de dados.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <!-- CONSULTA 1: Veículos Disponíveis por Categoria e Ano Mínimo -->
+                <div class="col-lg-6">
+                    <div class="card section-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold mb-0">Consulta 1: Veículos Disponíveis (Multi-Filtro)</h5>
+                            <span class="route-badge">GET /api/filtros/veiculos-disponiveis</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            Cruza Veículos, Categorias e Fabricantes (<code>INNER JOIN</code>) e verifica a ausência de locação em aberto (<code>LEFT JOIN Alugueis WHERE DataDevolucao IS NULL</code>).
+                        </p>
+
+                        <div class="sql-box mb-3">
+                            <span class="sql-keyword">SELECT</span> v.Id, v.Modelo, v.AnoFabricacao, v.QuilometragemAtual, f.Nome, c.Nome<br>
+                            <span class="sql-keyword">FROM</span> Veiculos v<br>
+                            <span class="sql-keyword">INNER JOIN</span> Categorias c <span class="sql-keyword">ON</span> v.CategoriaId = c.Id<br>
+                            <span class="sql-keyword">INNER JOIN</span> Fabricantes f <span class="sql-keyword">ON</span> v.FabricanteId = f.Id<br>
+                            <span class="sql-keyword">LEFT JOIN</span> Alugueis a <span class="sql-keyword">ON</span> v.Id = a.VeiculoId <span class="sql-keyword">AND</span> a.DataDevolucao <span class="sql-keyword">IS NULL</span><br>
+                            <span class="sql-keyword">WHERE</span> a.Id <span class="sql-keyword">IS NULL AND</span> (@categoriaId <span class="sql-keyword">IS NULL OR</span> v.CategoriaId = @categoriaId) <span class="sql-keyword">AND</span> (@anoMin <span class="sql-keyword">IS NULL OR</span> v.AnoFabricacao &gt;= @anoMin)
+                        </div>
+
+                        <div class="filter-box mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-sm-5">
+                                    <label class="form-label small fw-semibold mb-1">Categoria</label>
+                                    <select id="filtroDispCategoria" class="form-select form-select-sm"></select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="form-label small fw-semibold mb-1">Ano Mínimo</label>
+                                    <input type="number" id="filtroDispAno" class="form-control form-control-sm" placeholder="Ex: 2024">
+                                </div>
+                                <div class="col-sm-3 d-flex gap-1">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="executarConsultaDisponiveis()">Consultar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Modelo</th>
+                                        <th>Fabricante</th>
+                                        <th>Categoria</th>
+                                        <th>Ano</th>
+                                        <th>KM</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaConsultaDisponiveis"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSULTA 2: Histórico de Aluguéis por Nome do Cliente (INNER JOIN) -->
+                <div class="col-lg-6">
+                    <div class="card section-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold mb-0">Consulta 2: Aluguéis por Cliente (INNER JOIN)</h5>
+                            <span class="route-badge">GET /api/filtros/alugueis-por-cliente</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            Realiza a junção interna entre as tabelas <code>Alugueis</code>, <code>Clientes</code> e <code>Veiculos</code> filtrando dinamicamente pelo nome do cliente.
+                        </p>
+
+                        <div class="sql-box mb-3">
+                            <span class="sql-keyword">SELECT</span> a.Id, a.DataInicio, a.DataPrevistaFim, a.DataDevolucao, a.ValorDiaria, c.Nome, v.Modelo<br>
+                            <span class="sql-keyword">FROM</span> Alugueis a<br>
+                            <span class="sql-keyword">INNER JOIN</span> Clientes c <span class="sql-keyword">ON</span> a.ClienteId = c.Id<br>
+                            <span class="sql-keyword">INNER JOIN</span> Veiculos v <span class="sql-keyword">ON</span> a.VeiculoId = v.Id<br>
+                            <span class="sql-keyword">WHERE</span> LOWER(c.Nome) <span class="sql-keyword">LIKE</span> '%' + @clienteNome + '%'
+                        </div>
+
+                        <div class="filter-box mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-sm-9">
+                                    <label class="form-label small fw-semibold mb-1">Nome do Cliente</label>
+                                    <input type="text" id="filtroJoinClienteNome" class="form-control form-control-sm" placeholder="Digite parte do nome (ex: Daniel, Mariana)...">
+                                </div>
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary btn-sm w-100" onclick="executarConsultaAlugueisPorCliente()">Consultar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Veículo</th>
+                                        <th>Início</th>
+                                        <th>Status</th>
+                                        <th>Diária</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaConsultaAlugueisCliente"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSULTA 3: Veículos por Fabricante (INNER JOIN) -->
+                <div class="col-lg-4">
+                    <div class="card section-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold mb-0">Consulta 3: Frota por Fabricante</h6>
+                            <span class="route-badge">GET /api/filtros/veiculos-por-fabricante</span>
+                        </div>
+                        <div class="filter-box my-2">
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="filtroJoinFabricanteNome" class="form-control" placeholder="Fabricante (ex: Toyota, Volkswagen)...">
+                                <button class="btn btn-primary" onclick="executarConsultaVeiculosPorFabricante()">Filtrar</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Modelo</th>
+                                        <th>Fabricante</th>
+                                        <th>Categoria</th>
+                                        <th>Ano</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaConsultaVeiculosFabricante"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSULTA 4: Fabricantes com Quantidade de Veículos (LEFT JOIN + GROUP BY) -->
+                <div class="col-lg-4">
+                    <div class="card section-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold mb-0">Consulta 4: Veículos por Fabricante (LEFT JOIN)</h6>
+                            <span class="route-badge">GET /api/filtros/fabricantes-com-veiculos</span>
+                        </div>
+                        <p class="text-muted small mb-2">Agrupamento <code>LEFT JOIN + GROUP BY</code> incluindo fabricantes sem veículos.</p>
+                        <div id="visualizacaoFabricantesGroup" class="mt-2"></div>
+                    </div>
+                </div>
+
+                <!-- CONSULTA 5: Clientes com Aluguéis Ativos (LEFT JOIN + GROUP BY) -->
+                <div class="col-lg-4">
+                    <div class="card section-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold mb-0">Consulta 5: Aluguéis Ativos por Cliente</h6>
+                            <span class="route-badge">GET /api/filtros/clientes-com-alugueis-ativos</span>
+                        </div>
+                        <p class="text-muted small mb-2">Agrupamento <code>LEFT JOIN + GROUP BY</code> contabilizando contratos abertos.</p>
+                        <div id="visualizacaoClientesAtivosGroup" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 3: CLIENTES (CRUD + 3 FILTROS PERSONALIZADOS)
+             ================================================================ -->
+        <section id="sec-clientes" class="tab-section d-none">
+            <div class="card section-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Gerenciamento de Clientes</h4>
+                        <small class="text-muted">Rota: <code>/api/clientes</code> | Cadastro, Edição, Exclusão e Pesquisa Multi-Campo</small>
+                    </div>
+                    <button class="btn btn-success fw-semibold" onclick="abrirModalCliente()">+ Novo Cliente</button>
+                </div>
+
+                <!-- Pesquisa com 3 Filtros Personalizados -->
+                <div class="filter-box mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por Nome</label>
+                            <input type="text" id="filtroClienteNome" class="form-control form-control-sm" placeholder="Ex: Daniel, Mariana...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por CPF</label>
+                            <input type="text" id="filtroClienteCpf" class="form-control form-control-sm" placeholder="Ex: 123456...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por E-mail</label>
+                            <input type="text" id="filtroClienteEmail" class="form-control form-control-sm" placeholder="Ex: @pucminas.br">
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button class="btn btn-primary btn-sm w-100" onclick="carregarClientes()">Pesquisar</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosClientes()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome Completo</th>
+                                <th>CPF</th>
+                                <th>E-mail</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaClientes"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 4: FABRICANTES (CRUD + 3 FILTROS PERSONALIZADOS)
+             ================================================================ -->
+        <section id="sec-fabricantes" class="tab-section d-none">
+            <div class="card section-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Gerenciamento de Fabricantes</h4>
+                        <small class="text-muted">Rota: <code>/api/fabricantes</code> | Cadastro, Edição, Exclusão e Pesquisa Multi-Campo</small>
+                    </div>
+                    <button class="btn btn-success fw-semibold" onclick="abrirModalFabricante()">+ Novo Fabricante</button>
+                </div>
+
+                <!-- Pesquisa com 3 Filtros Personalizados -->
+                <div class="filter-box mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por Nome do Fabricante</label>
+                            <input type="text" id="filtroFabricanteNome" class="form-control form-control-sm" placeholder="Ex: Toyota, BYD...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por Código (ID)</label>
+                            <input type="number" id="filtroFabricanteId" class="form-control form-control-sm" placeholder="Ex: 1">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Vínculo de Frota</label>
+                            <select id="filtroFabricantePossuiVeiculos" class="form-select form-select-sm">
+                                <option value="">Todos os fabricantes</option>
+                                <option value="true">Com veículos cadastrados</option>
+                                <option value="false">Sem veículos cadastrados</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button class="btn btn-primary btn-sm w-100" onclick="carregarFabricantes()">Pesquisar</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosFabricantes()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome do Fabricante</th>
+                                <th>Veículos Vinculados</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaFabricantes"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 5: CATEGORIAS (CRUD + 2 FILTROS PERSONALIZADOS)
+             ================================================================ -->
+        <section id="sec-categorias" class="tab-section d-none">
+            <div class="card section-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Gerenciamento de Categorias de Veículos</h4>
+                        <small class="text-muted">Rota: <code>/api/categorias</code> | Cadastro, Edição, Exclusão e Pesquisa Multi-Campo</small>
+                    </div>
+                    <button class="btn btn-success fw-semibold" onclick="abrirModalCategoria()">+ Nova Categoria</button>
+                </div>
+
+                <!-- Pesquisa com 2 Filtros Personalizados -->
+                <div class="filter-box mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por Nome da Categoria</label>
+                            <input type="text" id="filtroCategoriaNome" class="form-control form-control-sm" placeholder="Ex: SUV, Sedan, Picape...">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-semibold mb-1">Filtrar por Palavra-Chave na Descrição</label>
+                            <input type="text" id="filtroCategoriaDescricao" class="form-control form-control-sm" placeholder="Ex: porta-malas, urbano, elétrico...">
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button class="btn btn-primary btn-sm w-100" onclick="carregarCategorias()">Pesquisar</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosCategorias()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome da Categoria</th>
+                                <th>Descrição</th>
+                                <th>Veículos</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaCategorias"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 6: VEÍCULOS (CRUD + 5 FILTROS PERSONALIZADOS)
+             ================================================================ -->
+        <section id="sec-veiculos" class="tab-section d-none">
+            <div class="card section-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Gerenciamento da Frota de Veículos</h4>
+                        <small class="text-muted">Rota: <code>/api/veiculos</code> | Cadastro, Edição, Exclusão e Pesquisa Multi-Campo</small>
+                    </div>
+                    <button class="btn btn-success fw-semibold" onclick="abrirModalVeiculo()">+ Novo Veículo</button>
+                </div>
+
+                <!-- Pesquisa com 5 Filtros Personalizados -->
+                <div class="filter-box mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Modelo</label>
+                            <input type="text" id="filtroVeiculoModelo" class="form-control form-control-sm" placeholder="Ex: Corolla, Hilux...">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Fabricante</label>
+                            <select id="filtroVeiculoFabricante" class="form-select form-select-sm"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Categoria</label>
+                            <select id="filtroVeiculoCategoria" class="form-select form-select-sm"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Ano Mínimo</label>
+                            <input type="number" id="filtroVeiculoAnoMin" class="form-control form-control-sm" placeholder="Ex: 2024">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label small fw-semibold mb-1">KM Máx.</label>
+                            <input type="number" id="filtroVeiculoKmMax" class="form-control form-control-sm" placeholder="20000">
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button class="btn btn-primary btn-sm w-100" onclick="carregarVeiculos()">Pesquisar</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosVeiculos()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Modelo</th>
+                                <th>Fabricante</th>
+                                <th>Categoria</th>
+                                <th>Ano</th>
+                                <th>Quilometragem</th>
+                                <th>Disponibilidade</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaVeiculos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 7: ALUGUÉIS (CRUD + DEVOLUÇÃO + 4 FILTROS PERSONALIZADOS)
+             ================================================================ -->
+        <section id="sec-alugueis" class="tab-section d-none">
+            <div class="card section-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Gerenciamento de Contratos de Aluguel</h4>
+                        <small class="text-muted">Rota: <code>/api/alugueis</code> | Registro de Locação, Devolução/Edição, Exclusão e Pesquisa Multi-Campo</small>
+                    </div>
+                    <button class="btn btn-success fw-semibold" onclick="abrirModalAluguel()">+ Novo Aluguel</button>
+                </div>
+
+                <!-- Pesquisa com 4 Filtros Personalizados -->
+                <div class="filter-box mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Cliente</label>
+                            <input type="text" id="filtroAluguelCliente" class="form-control form-control-sm" placeholder="Nome do cliente...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Veículo</label>
+                            <input type="text" id="filtroAluguelVeiculo" class="form-control form-control-sm" placeholder="Modelo do veículo...">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Status da Locação</label>
+                            <select id="filtroAluguelStatus" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="ativo">Em Andamento (Ativo)</option>
+                                <option value="finalizado">Devolvido (Finalizado)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Diária Máxima (R$)</label>
+                            <input type="number" step="0.01" id="filtroAluguelDiariaMax" class="form-control form-control-sm" placeholder="Ex: 300">
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button class="btn btn-primary btn-sm w-100" onclick="carregarAlugueis()">Pesquisar</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosAlugueis()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Veículo</th>
+                                <th>Período (Início → Prev. Fim)</th>
+                                <th>Devolução</th>
+                                <th>KM (Inicial → Final)</th>
+                                <th>Diária</th>
+                                <th>Total</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaAlugueis"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             ABA 8: PRODUTOS & ACESSÓRIOS (CRUD + 4 FILTROS PERSONALIZADOS)
+             ================================================================ -->
+        <section id="sec-produtos" class="tab-section d-none">
+            <div class="card section-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Catálogo de Produtos e Acessórios Automotivos</h4>
+                        <small class="text-muted">Rota: <code>/api/produtos</code> | Cadastro, Edição, Exclusão e Pesquisa por Nome, Código e Categoria</small>
+                    </div>
+                    <button class="btn btn-success fw-semibold" onclick="abrirModalProduto()">+ Novo Produto</button>
+                </div>
+
+                <!-- Pesquisa com 4 Filtros Personalizados -->
+                <div class="filter-box mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Nome do Produto</label>
+                            <input type="text" id="filtroProdutoNome" class="form-control form-control-sm" placeholder="Ex: GPS, Cadeirinha...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold mb-1">Código SKU</label>
+                            <input type="text" id="filtroProdutoCodigo" class="form-control form-control-sm" placeholder="Ex: ACESS-GPS-001">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Categoria</label>
+                            <input type="text" id="filtroProdutoCategoria" class="form-control form-control-sm" placeholder="Ex: Segurança">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-semibold mb-1">Preço Máximo (R$)</label>
+                            <input type="number" step="0.01" id="filtroProdutoPrecoMax" class="form-control form-control-sm" placeholder="Ex: 900">
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button class="btn btn-primary btn-sm w-100" onclick="carregarProdutos()">Pesquisar</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosProdutos()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Avaliação</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaProdutos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ====================================================================
+         MODAIS DE CADASTRO E EDIÇÃO PARA TODAS AS ENTIDADES
+         ==================================================================== -->
+
+    <!-- 1. Modal Cliente -->
+    <div class="modal fade" id="modalCliente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formCliente">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="tituloModalCliente">Cadastrar Cliente</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="clienteId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome Completo *</label>
+                            <input type="text" id="clienteNome" class="form-control" maxlength="150" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">CPF (11 números) *</label>
+                            <input type="text" id="clienteCpf" class="form-control" pattern="\d{11}" maxlength="11" placeholder="Somente 11 dígitos numéricos" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">E-mail *</label>
+                            <input type="email" id="clienteEmail" class="form-control" maxlength="254" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal Fabricante -->
+    <div class="modal fade" id="modalFabricante" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formFabricante">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="tituloModalFabricante">Cadastrar Fabricante</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="fabricanteId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome do Fabricante *</label>
+                            <input type="text" id="fabricanteNome" class="form-control" maxlength="100" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Fabricante</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal Categoria -->
+    <div class="modal fade" id="modalCategoria" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formCategoria">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="tituloModalCategoria">Cadastrar Categoria</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="categoriaId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome da Categoria *</label>
+                            <input type="text" id="categoriaNome" class="form-control" maxlength="80" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Descrição</label>
+                            <textarea id="categoriaDescricao" class="form-control" rows="3" maxlength="300"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Categoria</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Modal Veículo -->
+    <div class="modal fade" id="modalVeiculo" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formVeiculo">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="tituloModalVeiculo">Cadastrar Veículo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="veiculoId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Modelo do Veículo *</label>
+                            <input type="text" id="veiculoModelo" class="form-control" maxlength="120" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Fabricante *</label>
+                                <select id="veiculoFabricanteId" class="form-select" required></select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Categoria *</label>
+                                <select id="veiculoCategoriaId" class="form-select" required></select>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Ano de Fabricação *</label>
+                                <input type="number" id="veiculoAno" class="form-control" min="1886" max="2100" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Quilometragem Atual (KM) *</label>
+                                <input type="number" id="veiculoKm" class="form-control" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Veículo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Modal Aluguel -->
+    <div class="modal fade" id="modalAluguel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formAluguel">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="tituloModalAluguel">Registrar Contrato de Aluguel</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="aluguelId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Cliente *</label>
+                                <select id="aluguelClienteId" class="form-select" required></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Veículo *</label>
+                                <select id="aluguelVeiculoId" class="form-select" required onchange="preencherKmVeiculoSelecionado()"></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Data de Início *</label>
+                                <input type="date" id="aluguelDataInicio" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Data Prevista Fim *</label>
+                                <input type="date" id="aluguelDataPrevistaFim" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Valor da Diária (R$) *</label>
+                                <input type="number" step="0.01" min="0.01" id="aluguelValorDiaria" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">KM Inicial *</label>
+                                <input type="number" min="0" id="aluguelKmInicial" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Data Devolução (Encerramento)</label>
+                                <input type="date" id="aluguelDataDevolucao" class="form-control" onchange="calcularValorTotalAluguel()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">KM Final (Na Devolução)</label>
+                                <input type="number" min="0" id="aluguelKmFinal" class="form-control">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Valor Total da Locação (R$)</label>
+                                <input type="number" step="0.01" min="0" id="aluguelValorTotal" class="form-control" placeholder="Calculado automaticamente na devolução ou informado manualmente">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Contrato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Modal Produto -->
+    <div class="modal fade" id="modalProduto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formProduto">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="tituloModalProduto">Cadastrar Produto</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="produtoId">
+                        <div class="row g-2 mb-3">
+                            <div class="col-7">
+                                <label class="form-label fw-semibold">Nome do Produto *</label>
+                                <input type="text" id="produtoNome" class="form-control" required>
+                            </div>
+                            <div class="col-5">
+                                <label class="form-label fw-semibold">Código SKU *</label>
+                                <input type="text" id="produtoCodigo" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <label class="form-label fw-semibold">Preço (R$) *</label>
+                                <input type="number" step="0.01" min="0" id="produtoPreco" class="form-control" required>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label fw-semibold">Estoque *</label>
+                                <input type="number" min="0" id="produtoEstoque" class="form-control" required>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label fw-semibold">Avaliação (0-5) *</label>
+                                <input type="number" step="0.1" min="0" max="5" id="produtoAvaliacao" class="form-control" value="4.8" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Categoria *</label>
+                            <input type="text" id="produtoCategoria" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Descrição</label>
+                            <textarea id="produtoDescricao" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Produto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
